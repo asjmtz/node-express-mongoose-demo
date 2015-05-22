@@ -37,7 +37,7 @@ var UserSchema = new Schema({
 /**
  * Virtuals
  */
-
+// 给 数据库中存储的固定字段一些包装，通过getter 和 setter来控制数据的访问形态
 UserSchema
   .virtual('password')
   .set(function(password) {
@@ -50,13 +50,14 @@ UserSchema
 /**
  * Validations
  */
-
+// 验证存在
 var validatePresenceOf = function (value) {
   return value && value.length;
 };
 
 // the below 5 validations only apply if you are signing up traditionally
-
+// Validation occurs when a document attempts to be saved, after defaults have been applied
+// 验证在数据被保存之前被触发，之后默认的行为会触发
 UserSchema.path('name').validate(function (name) {
   if (this.skipValidation()) return true;
   return name.length;
@@ -178,8 +179,12 @@ UserSchema.statics = {
 
   load: function (options, cb) {
     options.select = options.select || 'name username';
+
+    // 查找的选项 options.criteria 
     this.findOne(options.criteria)
+    // 查找的结果显示的项目 
       .select(options.select)
+    // 执行
       .exec(cb);
   }
 }
